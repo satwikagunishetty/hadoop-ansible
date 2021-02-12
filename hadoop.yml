@@ -1,0 +1,20 @@
+
+
+- hosts: master
+  
+
+  roles:
+   - role: "hadoop-master"
+
+- hosts: slave
+
+
+  roles:
+   - role: "hadoop-slave_role"
+
+- hosts: client
+
+
+  roles:
+   - role: "hadoop-client_role"
+
