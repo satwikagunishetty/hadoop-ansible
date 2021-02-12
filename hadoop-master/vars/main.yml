@@ -1,0 +1,5 @@
+---
+# vars file for hadoop-master
+master_ip: "0.0.0.0"
+port: "5001"
+directory_path: "/nn"

@@ -1,0 +1,85 @@
+---
+# tasks file for hadoop-master
+  - name: copy java software
+    copy:
+      src: /root/jdk-8u171-linux-x64.rpm
+      dest: /root/
+
+  - name: Copy hadoop software
+    copy:
+      src: /root/hadoop-1.2.1-1.x86_64.rpm
+      dest: /root/
+
+  - name: "checking Jdk in the datanode"
+    shell: "rpm -q jdk1.8-1.8.0_171-fcs.x86_64"
+    register: jdk
+    ignore_errors: yes
+
+  - name: "Installing Jdk in the datanode"
+    shell:  "rpm -ivh jdk-8u171-linux-x64.rpm"
+    when: jdk.rc !=0
+
+
+  - name: Installing hadoop software"
+    command: "rpm -ivh hadoop-1.2.1-1.x86_64.rpm --force"
+    ignore_errors: yes
+ 
+
+  - template:
+      src: "templates/hdfs-site.xml"
+      dest: "/etc/hadoop/hdfs-site.xml"
+
+  - template:
+      src: "templates/core-site.xml"
+      dest: /etc/hadoop
+
+  - name: "deleting directory"
+    file:
+      state: absent
+      path: "{{ directory_path}}"
+    ignore_errors: yes
+    register: x
+
+  - name: "Creating a directory"
+    file:
+      state: directory
+      path: "{{ directory_path }}"
+    when: x.state=='absent'
+  
+  - name: "formatting namenode"
+    shell: "echo Y | hadoop namenode -format"
+    register: format
+  
+  - name: "formatting namenode"
+    debug:
+      var: format.stdout
+
+  - name: "Stoping the namenode"
+    shell: "hadoop-daemon.sh stop namenode"
+    ignore_errors: yes
+    register: hadoop_stopped
+
+  - name: "Stopping hadoop"
+    debug:
+     var: hadoop_stopped.stdout
+    ignore_errors: yes
+
+  - name: "starting namenode"
+    command: "hadoop-daemon.sh start namenode"
+    register: hadoop_start
+
+  - name: "starting hadoop"
+    debug:
+       var: hadoop_start.stdout     
+  
+  - name: hadoop cluster report
+    shell: "hadoop dfsadmin -report | less"
+    register: report
+    ignore_errors: yes
+    
+ 
+  - name: "report of hadoop cluster"
+    debug:  
+      var: report
+
+ 
