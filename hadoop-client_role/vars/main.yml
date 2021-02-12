@@ -1,0 +1,35 @@
+---
+# vars file for hadoop-client_role
+
+master_ip: 192.168.1.102
+
+port: 5001
+
+client_report: "hadoop fs -ls  /"
+
+file_name_1: "file.txt"
+
+file_name_2: "abc.txt"
+
+
+put_file_1: "hadoop fs -D dfs.block.size=1048576 -Ddfs.replication=1  -put /root/{{ file_name_1 }}  /"
+
+put_file_2: "hadoop fs  -D dfs.block.size=1048576 -Ddfs.replication=2  -put /root/{{ file_name_2 }}  /"
+
+client_file_src_1: "/ws6/client_files/{{ file_name_1 }}"
+
+client_file_src_2: "/ws6/client_files/{{ file_name_2 }}"
+
+
+file_content: "hadoop fs -cat /{{file_name_1}} /{{file_name_2}}"
+
+remove_file: "hadoop fs -rm /{{ file_name_1 }} /{{ file_name_2 }}"
+
+client_file_dest: "/root/"
+
+#dfs.block.size 128*1024*1024=134217728 in bits
+
+
+
+hadoop_report: "hadoop dfsadmin -report"
+ 
